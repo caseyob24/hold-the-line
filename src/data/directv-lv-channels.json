@@ -1,0 +1,32 @@
+{
+  "_note": "DirecTV Las Vegas channel numbers. Seed values: VERIFY each against your on-screen guide. Keys are matched case-insensitively against ESPN broadcast names.",
+  "channels": {
+    "NBC": "3",
+    "FOX": "5",
+    "CBS": "8",
+    "ABC": "13",
+    "ESPN": "206",
+    "ESPNU": "208",
+    "ESPN2": "209",
+    "NFL NET": "212",
+    "NFL NETWORK": "212",
+    "MLB NET": "213",
+    "MLB NETWORK": "213",
+    "NHL NET": "215",
+    "NHL NETWORK": "215",
+    "FS1": "219",
+    "CBSSN": "221",
+    "CBS SPORTS NETWORK": "221",
+    "TNT": "245",
+    "TBS": "247",
+    "TRUTV": "246",
+    "BTN": "610",
+    "SECN": "611",
+    "SEC NETWORK": "611",
+    "ACCN": "612",
+    "ACC NETWORK": "612",
+    "FS2": "618",
+    "VEGAS 34": ""
+  },
+  "streaming": ["PRIME VIDEO", "PEACOCK", "NETFLIX", "ESPN+", "APPLE TV", "APPLE TV+", "YOUTUBE", "MAX", "PARAMOUNT+", "NFL+", "MLB.TV", "ESPN UNLMTD"]
+}
