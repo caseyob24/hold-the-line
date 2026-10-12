@@ -5,6 +5,7 @@ import { addDays, dateKey, daysSince } from '../lib/time';
 import { DAILY_GOAL, DRILLS, drillByKey, suggestedFor } from '../lib/workbook';
 import { Icon } from '../components/Icon';
 import type { Review } from '../lib/types';
+import { track } from '../lib/track';
 
 const OUTCOME_LABEL = { held: 'Held the line', struggled: 'Struggled', slipped: 'Slipped' } as const;
 
@@ -59,6 +60,7 @@ export default function Today() {
       { onConflict: 'user_id,date' },
     );
     if (error) return toast(error.message);
+    track('pledge');
     await pledges.reload();
     if (weekCount + 1 === 7) { celebrate(); toast('7 for 7. The week is yours.'); }
     else toast("Pledged. Tomorrow isn't your fight yet.");

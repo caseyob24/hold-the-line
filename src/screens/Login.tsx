@@ -80,6 +80,7 @@ export default function Login({ redirectTo, heading }: { redirectTo?: string; he
             </button>
           </>
         )}
+        <a className="xs muted" href="/privacy" style={{ textAlign: 'center', padding: 8 }}>Privacy</a>
       </form>
     </div>
   );

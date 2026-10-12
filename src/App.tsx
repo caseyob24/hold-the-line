@@ -27,6 +27,8 @@ import Today from './screens/Today';
 import Review from './screens/Review';
 import Motivation from './screens/Motivation';
 import { DrillScreen, WorkbookList } from './screens/Workbook';
+import Admin from './screens/Admin';
+import Privacy from './screens/Privacy';
 
 export default function App() {
   const { ready, session, profile } = useApp();
@@ -37,6 +39,7 @@ export default function App() {
   if (!ready) return <div className="lock-screen"><span className="lbl">Mustering…</span></div>;
 
   // Join links work signed in or out.
+  if (loc.pathname === '/privacy') return <Privacy />;
   if (loc.pathname.startsWith('/join/')) {
     return <Routes><Route path="/join/:code" element={<Join />} /></Routes>;
   }
@@ -72,6 +75,7 @@ export default function App() {
         <Route path="/settings" element={withTabs(<Settings />)} />
         <Route path="/game-day" element={withTabs(<GameDay />)} />
         <Route path="/more" element={withTabs(<More />)} />
+        <Route path="/admin" element={withTabs(<Admin />)} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
-import { useApp } from '../lib/store';
+import { useApp, useLoad } from '../lib/store';
+import { supabase } from '../lib/supabase';
 import { Header } from '../components/Chrome';
 import { Icon } from '../components/Icon';
 
 export default function More() {
   const { profile, sponsoring } = useApp();
   const isSponsor = profile?.role === 'sponsor';
+  const admin = useLoad(async () => Boolean((await supabase.rpc('is_admin')).data), []);
   const items = [
     ...(!isSponsor ? [
       { to: '/calendar', icon: 'calendar', label: 'Calendar' },
@@ -20,6 +22,8 @@ export default function More() {
     ...(sponsoring && !isSponsor ? [{ to: '/sponsor-view', icon: 'users', label: 'Sponsor command' }] : []),
     { to: '/game-day', icon: 'tv', label: 'Game Day' },
     { to: '/settings', icon: 'gear', label: 'Settings' },
+    ...(admin.data ? [{ to: '/admin', icon: 'trophy', label: 'Command post (owner)' }] : []),
+    { to: '/privacy', icon: 'lock', label: 'Privacy' },
   ];
   return (
     <div className="screen">

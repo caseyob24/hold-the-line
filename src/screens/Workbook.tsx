@@ -7,6 +7,7 @@ import { DAILY_GOAL, DRILLS, drillByKey } from '../lib/workbook';
 import { Header, ErrorNote } from '../components/Chrome';
 import { Icon } from '../components/Icon';
 import type { WorkbookEntry } from '../lib/types';
+import { track } from '../lib/track';
 
 /** All drills, grouped by category, with today's completions and recent history. */
 export function WorkbookList() {
@@ -90,6 +91,7 @@ export function DrillScreen() {
     );
     setBusy(false);
     if (error) return setErr(error.message);
+    track('drill_done', { drill: drill?.key });
     const n = existing.data ? doneToday.data ?? 0 : (doneToday.data ?? 0) + 1;
     if (!existing.data && n === DAILY_GOAL) { celebrate(); toast(`${DAILY_GOAL} of ${DAILY_GOAL}. Workbook done for today.`); }
     else toast(existing.data ? 'Updated' : `Drill complete · ${Math.min(n, DAILY_GOAL)} of ${DAILY_GOAL}`);

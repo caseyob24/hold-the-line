@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { quoteFor, yearLabel } from '../lib/quotes';
 import { Sheet } from './Chrome';
+import { track } from '../lib/track';
 
 const shortDay = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 
@@ -16,6 +17,7 @@ export function FieldBrief({ day, today, authors, onClose }: { day: string; toda
   const q = quoteFor(k, authors ?? []);
   const short = q.battle.replace(/^(First |Second )?(Battle|Siege|Raid) of (the )?/, '');
   const place = q.place.split(',')[0];
+  useEffect(() => { track('field_brief', { quote: q.id }); }, [q.id]);
 
   async function share() {
     const text = `“${q.text}” — ${q.speaker}, ${q.battle} (${yearLabel(q.year)})\n\n${q.lesson}`;

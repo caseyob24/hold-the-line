@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
 import { Header, ErrorNote } from '../components/Chrome';
 import type { Urge } from '../lib/types';
+import { track } from '../lib/track';
 
 const TRIGGERS = ['Stress', 'Boredom', 'Social event', 'Lonely', 'Tired', 'Celebrating', 'Game on TV', 'Anger', 'Payday', 'Other'];
 const COPING = ['Called sponsor', 'Workout', 'Left the room', 'Breathing', 'Ate something', 'Went to a meeting', 'Played it forward', 'Still in it'];
@@ -59,6 +60,7 @@ export default function UrgeLog() {
     });
     setBusy(false);
     if (error) return setErr(error.message);
+    track('urge_logged');
     api('push-flush', { method: 'POST' }).catch(() => undefined); // tell the sponsor now, not at the next cron tick
     if (thenReachOut) return nav('/reach-out');
     toast(coping.includes('Still in it') ? 'Logged. Reach out — you don\'t fight alone.' : 'Logged. You held the line.');

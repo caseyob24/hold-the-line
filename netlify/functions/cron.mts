@@ -33,9 +33,12 @@ interface Profile {
 
 export default async () => {
   const started = Date.now();
-  const { data: profiles, error } = await db().from('profiles')
-    .select('id, display_name, role, timezone, onboarded, quote_time, quote_authors, quote_last_sent, checkin_reminder_time, notify_checkin, notify_review, review_time')
-    .eq('onboarded', true);
+  // Only profiles with something due in this 15-minute window of their own local time.
+  let { data: profiles, error } = await db().rpc('due_profiles', { window_minutes: WINDOW });
+  if (error) {
+    // Migration 0003 not applied yet: fall back to scanning every onboarded profile.
+    ({ data: profiles, error } = await db().from('profiles').select('*').eq('onboarded', true));
+  }
   if (error) {
     console.error(error.message);
     return;

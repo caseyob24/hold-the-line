@@ -6,6 +6,7 @@ import { dateKey, daysSince } from '../lib/time';
 import { DAILY_GOAL } from '../lib/workbook';
 import { Header, ErrorNote } from '../components/Chrome';
 import type { Review as ReviewRow } from '../lib/types';
+import { track } from '../lib/track';
 
 const OUTCOMES = [
   { k: 'held', label: 'Held the line', on: { borderColor: 'var(--olive)', background: '#22261A', color: '#DCE3A8' } },
@@ -66,6 +67,7 @@ export default function Review() {
     }, { onConflict: 'user_id,date' });
     setBusy(false);
     if (error) return setErr(error.message);
+    track('review_saved', { outcome });
     toast(outcome === 'held' ? 'Day closed out. Another one held.' : outcome === 'slipped' ? 'Logged. Tomorrow is a fresh pledge — reach out tonight.' : 'Logged. You made it through a hard one.');
     nav(outcome === 'slipped' ? '/reach-out' : '/');
   }

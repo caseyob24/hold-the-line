@@ -4,6 +4,7 @@ import { configured, must, supabase } from './supabase';
 import type { Profile, Sobriety, SponsorLink } from './types';
 import { RANKS } from './ranks';
 import { daysSince } from './time';
+import { startTracking } from './track';
 
 interface AppState {
   ready: boolean;
@@ -84,11 +85,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!configured) return;
     supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
+      startTracking(data.session?.user.id ?? null);
       if (data.session) await load(data.session.user.id).catch(() => undefined);
       setReady(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
+      startTracking(s?.user.id ?? null);
       if (s) load(s.user.id).catch(() => undefined);
       else {
         setProfile(null);

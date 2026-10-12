@@ -7,6 +7,7 @@ import { getEvents, isHighRisk, outlookStatus, syncRiskEvents } from '../lib/out
 import { Header, ErrorNote } from '../components/Chrome';
 import { Icon } from '../components/Icon';
 import type { CheckIn as CheckInRow } from '../lib/types';
+import { track } from '../lib/track';
 
 const MOODS = ['Rough', 'Low', 'Steady', 'Good', 'Strong'];
 
@@ -60,6 +61,7 @@ export default function CheckIn() {
     );
     setBusy(false);
     if (error) return setErr(error.message);
+    track('check_in');
     toast(existing.data ? 'Check-in updated' : 'Reported for duty. Hold the line today.');
     nav('/');
   }

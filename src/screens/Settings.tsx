@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApp, useLoad } from '../lib/store';
 import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 import { AUTHORS } from '../lib/quotes';
 import { connectOutlook, disconnectOutlook, outlookStatus } from '../lib/outlook';
 import { enablePush, pushState } from '../lib/push';
@@ -15,7 +16,7 @@ const LEAGUES = [{ k: 'nfl', l: 'NFL' }, { k: 'ncaaf', l: 'NCAAF' }, { k: 'nhl',
 export default function Settings() {
   const { profile, updateProfile, session, toast } = useApp();
   const [params, setParams] = useSearchParams();
-  const [sheet, setSheet] = useState<null | 'quotes' | 'keywords' | 'teams' | 'channels' | 'pin' | 'name' | 'password'>(null);
+  const [sheet, setSheet] = useState<null | 'quotes' | 'keywords' | 'teams' | 'channels' | 'pin' | 'name' | 'password' | 'delete'>(null);
   const [push, setPush] = useState<'on' | 'off' | 'unsupported'>('off');
   const [lockOn, setLockOn] = useState(lockEnabled());
   const [bioOk, setBioOk] = useState(false);
@@ -127,7 +128,10 @@ export default function Settings() {
         <Link className="item" to="/sponsor"><span>Sponsor permissions</span><span className="v">Manage</span></Link>
         <button className="item" onClick={exportCsv}><span>Export my data</span><span className="v">CSV</span></button>
         <button className="item" onClick={() => supabase.auth.signOut()}><span>Sign out</span><span className="v">{session?.user.email}</span></button>
+        <Link className="item" to="/privacy"><span>Privacy</span><span className="v">How your data is handled</span></Link>
+        <button className="item" onClick={() => setSheet('delete')}><span style={{ color: 'var(--urge)' }}>Delete account</span><span className="v">Permanent</span></button>
       </div>
+      {sheet === 'delete' && <DeleteSheet onClose={() => setSheet(null)} />}
 
       {sheet === 'name' && <NameSheet p={profile} onClose={() => setSheet(null)} onSave={async (patch) => { await save(patch); setSheet(null); }} />}
       {sheet === 'quotes' && <QuoteSheet selected={profile.quote_authors} onClose={() => setSheet(null)} onSave={async (a) => { await save({ quote_authors: a }); setSheet(null); }} />}
@@ -248,6 +252,30 @@ function PinSheet({ onClose, onSet }: { onClose: () => void; onSet: () => void }
         await setPin(a);
         onSet();
       }}>Set passcode</button>
+    </Sheet>
+  );
+}
+
+function DeleteSheet({ onClose }: { onClose: () => void }) {
+  const [text, setText] = useState('');
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  return (
+    <Sheet onClose={onClose} label="Delete account">
+      <span className="lbl" style={{ color: 'var(--urge)' }}>Delete account</span>
+      <p className="small">This permanently erases your streaks, check-ins, debriefs, workbook, urges, workouts and sponsor links. It can't be undone. Export your data first if you want a copy.</p>
+      <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Type DELETE to confirm" aria-label="Type DELETE to confirm" autoCapitalize="characters" />
+      <ErrorNote msg={err} />
+      <button className="btn full" style={{ background: 'var(--urge)', color: '#fff', border: 0 }} disabled={busy || text !== 'DELETE'} onClick={async () => {
+        setBusy(true);
+        try {
+          await api('delete-account', { method: 'POST', body: JSON.stringify({ confirm: 'DELETE' }) });
+          await supabase.auth.signOut();
+        } catch (e) {
+          setErr((e as Error).message);
+          setBusy(false);
+        }
+      }}>{busy ? 'Deleting…' : 'Delete everything'}</button>
     </Sheet>
   );
 }
