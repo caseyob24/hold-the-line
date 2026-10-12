@@ -26,8 +26,8 @@ Netlify Functions for anything that needs a secret.
 
 1. Create a free project at [supabase.com](https://supabase.com).
 2. **SQL Editor → New query**, paste all of `supabase/migrations/0001_init.sql`, run it.
-3. **Authentication → URL Configuration**: set *Site URL* to your Netlify URL (e.g. `https://hold-the-line.netlify.app`)
-   and add `https://hold-the-line.netlify.app/**` to *Redirect URLs*. Add `http://localhost:5173/**` too for local dev.
+3. **Authentication → URL Configuration**: set *Site URL* to your Netlify URL (e.g. `https://holdtheline-casey.netlify.app`)
+   and add `https://holdtheline-casey.netlify.app/**` to *Redirect URLs*. Add `http://localhost:5173/**` too for local dev.
 4. **Project Settings → API**: copy the *Project URL*, the *anon* key and the *service_role* key.
 
 ### 2. Push notification keys
