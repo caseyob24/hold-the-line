@@ -58,12 +58,16 @@ export default function Review() {
   const tally = useLoad(async () => {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
-    const [c, w, u] = await Promise.all([
+    const [c, w, u, g, gc] = await Promise.all([
       supabase.from('check_ins').select('pledged, created_at').eq('date', today).maybeSingle(),
       supabase.from('workbook_entries').select('id', { count: 'exact', head: true }).eq('date', today),
       supabase.from('urges').select('id', { count: 'exact', head: true }).gte('at', start.toISOString()),
+      supabase.from('goals').select('id, cadence').is('archived_at', null).is('paused_at', null),
+      supabase.from('goal_checks').select('goal_id').eq('date', today),
     ]);
-    return { pledged: Boolean(c.data?.pledged), pledgedAt: c.data?.created_at as string | undefined, drills: w.count ?? 0, urges: u.count ?? 0 };
+    const dow = (new Date(`${today}T12:00:00`).getDay() + 6) % 7;
+    const dueToday = ((g.data ?? []) as { id: string; cadence: string }[]).filter((x) => x.cadence !== 'once' && (x.cadence !== 'weekdays' || dow < 5)).length;
+    return { pledged: Boolean(c.data?.pledged), pledgedAt: c.data?.created_at as string | undefined, drills: w.count ?? 0, urges: u.count ?? 0, ordersDue: dueToday, ordersDone: (gc.data ?? []).length };
   }, [today]);
 
   const flip = (v: string) => setDiffs((d) => (d.includes(v) ? d.filter((x) => x !== v) : v === 'Nothing today' ? ['Nothing today'] : [...d.filter((x) => x !== 'Nothing today'), v]));
@@ -173,7 +177,7 @@ export default function Review() {
         <div className="card tight stack" style={{ fontSize: 14, gap: 4 }}>
           <span className="lbl" style={{ fontSize: 12 }}>Today's tally</span>
           <span className="mono xs muted">
-            {tally.data.pledged ? `Pledged${tally.data.pledgedAt ? ` ${new Date(tally.data.pledgedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : ''} ✓` : 'Not pledged'} · Drills {Math.min(tally.data.drills, DAILY_GOAL)}/{DAILY_GOAL} · {tally.data.urges} {tally.data.urges === 1 ? 'urge' : 'urges'}
+            {tally.data.pledged ? `Pledged${tally.data.pledgedAt ? ` ${new Date(tally.data.pledgedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}` : ''} ✓` : 'Not pledged'} · Drills {Math.min(tally.data.drills, DAILY_GOAL)}/{DAILY_GOAL}{tally.data.ordersDue ? ` · Orders ${Math.min(tally.data.ordersDone, tally.data.ordersDue)}/${tally.data.ordersDue}` : ''} · {tally.data.urges} {tally.data.urges === 1 ? 'urge' : 'urges'}
           </span>
         </div>
       )}

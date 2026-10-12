@@ -63,12 +63,14 @@ export default async () => {
         await db().from('profiles').update({ quote_last_sent: date }).eq('id', p.id);
         if (!(await pledgedToday())) {
           const q = quoteFor(date, p.quote_authors);
+          const { data: orders } = await db().from('goals').select('title').eq('user_id', p.id).eq('remind', true).is('archived_at', null).is('paused_at', null).order('position').limit(3);
+          const orderLine = orders?.length ? ` Orders: ${orders.map((o) => o.title).join(', ')}.` : '';
           const { data: sob } = await db().from('sobrieties').select('start_at').eq('user_id', p.id).is('archived_at', null)
             .order('is_primary', { ascending: false }).limit(1).maybeSingle();
           const day = sob ? Math.floor((Date.now() - Date.parse(sob.start_at)) / 86_400_000) : null;
           await pushToUser(p.id, {
             title: `${day !== null ? `Day ${day} · ` : ''}Make today's pledge`,
-            body: `“${q.text}” — ${q.speaker}. Tap to pledge.`,
+            body: `“${q.text}” — ${q.speaker}.${orderLine} Tap to pledge.`,
             url: '/today',
           });
         }

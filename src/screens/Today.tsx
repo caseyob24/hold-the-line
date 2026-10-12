@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { addDays, dateKey, daysSince } from '../lib/time';
 import { DAILY_GOAL, DRILLS, drillByKey, suggestedFor } from '../lib/workbook';
 import { DayArc } from '../components/DayArc';
+import { StandingOrders } from '../components/StandingOrders';
 import { Icon } from '../components/Icon';
 
 export default function Today() {
@@ -77,6 +78,8 @@ export default function Today() {
           {streak > 1 ? `${streak}-day pledge streak. ` : ''}{weekCount === 7 ? 'Seven for seven. The week is yours.' : 'Pledge all 7 days to take the week.'}
         </span>
       </div>
+
+      <StandingOrders />
 
       <div className="between">
         <span className="lbl">Workbook · pick {DAILY_GOAL}</span>

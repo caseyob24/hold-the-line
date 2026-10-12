@@ -59,6 +59,15 @@ function seed() {
   t('workout_sets').push({ id: uid(), workout_id: w.id, position: 0, exercise: 'Bench', sets: 4, reps: 8, weight: '185' }, { id: uid(), workout_id: w.id, position: 1, exercise: 'Incline DB', sets: 3, reps: 10, weight: '60' });
   t('backup_contacts').push({ id: uid(), user_id: ME, name: 'Remi', phone: '702-555-0123', relation: 'Friend' });
   t('affirmation_favorites').push({ user_id: ME, affirmation_index: 3 }, { user_id: ME, affirmation_index: 11 });
+  const monday = (() => { const d = daysAgo(0); const dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow); return d; })();
+  const mk = dkey(monday);
+  const g1 = { id: uid(), user_id: ME, title: 'Skincare', cadence: 'daily', target: 7, remind: true, position: 0, created_week: mk, carried_over: false, paused_at: null, archived_at: null, created_at: daysAgo(20).toISOString() };
+  const g2 = { id: uid(), user_id: ME, title: 'Whiten teeth', cadence: 'daily', target: 7, remind: false, position: 1, created_week: mk, carried_over: false, paused_at: null, archived_at: null, created_at: daysAgo(20).toISOString() };
+  const g3 = { id: uid(), user_id: ME, title: 'Gym', cadence: 'weekly', target: 4, remind: false, position: 2, created_week: mk, carried_over: false, paused_at: null, archived_at: null, created_at: daysAgo(20).toISOString() };
+  const g4 = { id: uid(), user_id: ME, title: 'Book dentist', cadence: 'once', target: 1, remind: false, position: 3, created_week: mk, carried_over: false, paused_at: null, archived_at: null, created_at: daysAgo(2).toISOString() };
+  t('goals').push(g1, g2, g3, g4);
+  for (let i = 1; i <= 9; i++) { t('goal_checks').push({ id: uid(), goal_id: g1.id, user_id: ME, date: dkey(daysAgo(i)) }); if (i % 3) t('goal_checks').push({ id: uid(), goal_id: g2.id, user_id: ME, date: dkey(daysAgo(i)) }); }
+  [1, 3].forEach((i) => t('goal_checks').push({ id: uid(), goal_id: g3.id, user_id: ME, date: dkey(daysAgo(i)) }));
   t('workbook_entries').push({ id: uid(), user_id: ME, date: dkey(daysAgo(0)), drill_key: 'gratitude', answers: { a: 'Coffee on the patio' }, created_at: nowIso() });
   const link = { id: uid(), user_id: ME, sponsor_id: SPONSOR, sponsor_name: 'Pat', sponsor_phone: '702-555-0199', status: 'active', is_primary: true, invite_code: 'abc123',
     permissions: { streaks: true, checkins: true, urge_alerts: true, missed_checkin_alerts: true, witness: true, journal: false, risk_events: true }, invited_at: daysAgo(30).toISOString(), accepted_at: daysAgo(29).toISOString() };
@@ -168,7 +177,7 @@ class Q implements PromiseLike<any> {
 }
 function naturalKeys(table: string) {
   return ({ check_ins: ['user_id', 'date'], reviews: ['user_id', 'date'], workbook_entries: ['user_id', 'date', 'drill_key'], affirmation_favorites: ['user_id', 'affirmation_index'],
-    push_subscriptions: ['endpoint'], risk_events: ['user_id', 'event_id'], profiles: ['id'] } as Record<string, string[]>)[table] ?? [];
+    push_subscriptions: ['endpoint'], risk_events: ['user_id', 'event_id'], profiles: ['id'], goal_checks: ['goal_id', 'date'] } as Record<string, string[]>)[table] ?? [];
 }
 
 // ------------------------------------------------------------------ rpc
