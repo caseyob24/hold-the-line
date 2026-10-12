@@ -7,7 +7,7 @@
   # These values are public by design (they ship in the browser bundle or are plain settings),
   # so Netlify's secret scanner must not fail the build when it finds them in the output.
   # Real secrets (service role key, VAPID private key, encryption key, MS client secret) stay scanned.
-  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,SUPABASE_URL,VITE_SUPABASE_ANON_KEY,VITE_VAPID_PUBLIC_KEY,VAPID_PUBLIC_KEY,VAPID_SUBJECT,MS_TENANT,SCORES_PROVIDER,MS_CLIENT_ID"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,SUPABASE_URL,VITE_SUPABASE_ANON_KEY,SUPABASE_ANON_KEY,SUPABASE_DATABASE_URL,VITE_SUPABASE_DATABASE_URL,VITE_VAPID_PUBLIC_KEY,VAPID_PUBLIC_KEY,VAPID_SUBJECT,MS_TENANT,SCORES_PROVIDER,MS_CLIENT_ID"
 
 [functions]
   node_bundler = "esbuild"
