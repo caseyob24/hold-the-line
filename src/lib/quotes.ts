@@ -2,16 +2,25 @@ import all from '../data/quotes.json';
 import affirmationList from '../data/affirmations.json';
 
 export interface Quote {
+  id: string;
   text: string;
-  author: string;
-  title: string;
-  era: string;
-  source?: string;
-  verified: boolean;
+  speaker: string;
+  speakerTitle: string;
+  battle: string;
+  war: string;
+  date: string;
+  year: number;
+  place: string;
+  /** documented = recorded at the time; traditional = handed down, wording uncertain */
+  record: 'documented' | 'traditional';
+  source: string;
+  moment: string;
+  lesson: string;
+  note?: string;
 }
 
-export const QUOTES = all as Quote[];
-export const AUTHORS = [...new Set(QUOTES.map((q) => q.author))].sort();
+export const QUOTES = all as unknown as Quote[];
+export const AUTHORS = [...new Set(QUOTES.map((q) => q.speaker))].sort();
 export const AFFIRMATIONS = affirmationList as string[];
 
 // Deterministic shuffle so every device (and the push job) agrees on the day's pick.
@@ -38,7 +47,7 @@ export function dailyIndex(day: string, len: number, salt = 0): number {
 
 /** The quote for a YYYY-MM-DD day, optionally limited to some commanders. */
 export function quoteFor(day: string, authors: string[] = []): Quote {
-  const pool = authors.length ? QUOTES.filter((q) => authors.includes(q.author)) : QUOTES;
+  const pool = authors.length ? QUOTES.filter((q) => authors.includes(q.speaker)) : QUOTES;
   const list = pool.length ? pool : QUOTES;
   return list[dailyIndex(day, list.length)];
 }
@@ -48,3 +57,6 @@ export function affirmationFor(day: string): { index: number; text: string } {
   const index = dailyIndex(day, AFFIRMATIONS.length, 1);
   return { index, text: AFFIRMATIONS[index] };
 }
+
+/** Year label: negative years are BC. */
+export const yearLabel = (y: number) => (y < 0 ? `${-y} BC` : `${y}`);

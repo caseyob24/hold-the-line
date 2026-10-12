@@ -135,7 +135,7 @@ p { margin: 0; line-height: 1.45; }
 .tab svg { width: 22px; height: 22px; }
 
 .sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 30; display: flex; align-items: flex-end; justify-content: center; }
-.sheet { width: 100%; max-width: 480px; background: #171912; border: 1px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 24px); display: flex; flex-direction: column; gap: 10px; }
+.sheet { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; background: #171912; border: 1px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 24px); display: flex; flex-direction: column; gap: 10px; }
 
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + 24px); background: var(--brass); color: var(--bg); font-weight: 600; padding: 12px 18px; border-radius: 12px; z-index: 40; max-width: 90vw; }
 .banner { border-radius: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.45; }
@@ -203,3 +203,14 @@ p { margin: 0; line-height: 1.45; }
   .breath { transition: none; }
   .confetti { display: none; }
 }
+
+/* Field brief */
+.brief-tag { font-size: 11px; font-weight: 600; border-radius: 6px; padding: 3px 8px; letter-spacing: .04em; }
+.brief-tag.documented { color: #C9D89A; background: #222817; }
+.brief-tag.traditional { color: #BFD6EE; background: #1B2430; }
+.brief-facts { display: flex; gap: 10px; background: #1D2018; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.brief-facts > div { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.brief-facts span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.brief-facts b { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; line-height: 1.15; }
+.brief-lesson { background: #1E1F15; border: 1px solid var(--brass-line); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.quote-tap { text-align: left; width: 100%; font: inherit; color: inherit; cursor: pointer; }

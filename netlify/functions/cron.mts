@@ -65,7 +65,7 @@ export default async () => {
           const day = sob ? Math.floor((Date.now() - Date.parse(sob.start_at)) / 86_400_000) : null;
           await pushToUser(p.id, {
             title: `${day !== null ? `Day ${day} · ` : ''}Make today's pledge`,
-            body: `“${q.text}” — ${q.author}. Tap to pledge.`,
+            body: `“${q.text}” — ${q.speaker}. Tap to pledge.`,
             url: '/today',
           });
         }
@@ -74,7 +74,7 @@ export default async () => {
       // 2. Quote-only push (sponsors, or users who turned the pledge reminder off).
       if ((!isUser || !p.notify_checkin) && inWindow(minutes, toMinutes(p.quote_time)) && p.quote_last_sent !== date) {
         const q = quoteFor(date, p.quote_authors);
-        await pushToUser(p.id, { title: 'Order of the day', body: `“${q.text}” — ${q.author}`, url: '/motivation' });
+        await pushToUser(p.id, { title: 'Order of the day', body: `“${q.text}” — ${q.speaker}`, url: '/motivation' });
         await db().from('profiles').update({ quote_last_sent: date }).eq('id', p.id);
       }
       if (!isUser) continue;

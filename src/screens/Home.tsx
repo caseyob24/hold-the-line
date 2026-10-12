@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp, useLoad } from '../lib/store';
 import { supabase } from '../lib/supabase';
-import { quoteFor } from '../lib/quotes';
+import { quoteFor, yearLabel } from '../lib/quotes';
+import { FieldBrief } from '../components/FieldBrief';
 import { currentRank, nextRank, progressToNext } from '../lib/ranks';
 import { dateKey, elapsedParts, greeting } from '../lib/time';
 import { Icon } from '../components/Icon';
@@ -13,6 +14,7 @@ export default function Home() {
   const { profile, sobrieties, links, sponsoring } = useApp();
   const nav = useNavigate();
   const [now, setNow] = useState(Date.now());
+  const [brief, setBrief] = useState(false);
   useEffect(() => {
     const t = window.setInterval(() => setNow(Date.now()), 30_000);
     return () => window.clearInterval(t);
@@ -75,11 +77,15 @@ export default function Home() {
         <Empty to="/sobrieties" cta="Add one">Nothing tracked yet.</Empty>
       )}
 
-      <div className="card stack">
-        <span className="lbl">Order of the day</span>
+      <button className="card stack quote-tap" onClick={() => setBrief(true)} aria-label="Open field brief for today's quote">
+        <span className="row" style={{ justifyContent: 'space-between' }}>
+          <span className="lbl">Order of the day</span>
+          <span className="xs brass">{quote.battle} · {yearLabel(quote.year)} ›</span>
+        </span>
         <p className="display" style={{ fontWeight: 500, fontSize: 24, lineHeight: 1.15 }}>“{quote.text}”</p>
-        <span className="small muted">— {quote.author}{quote.title ? `, ${quote.title}` : ''}</span>
-      </div>
+        <span className="small muted">— {quote.speaker}{quote.speakerTitle ? `, ${quote.speakerTitle}` : ''}</span>
+      </button>
+      {brief && <FieldBrief day={today} today={today} authors={profile?.quote_authors} onClose={() => setBrief(false)} />}
 
       <div className="grid2">
         <button className="btn" style={{ background: checkin.data ? 'var(--card)' : 'var(--brass)', color: checkin.data ? 'var(--olive)' : 'var(--bg)', border: checkin.data ? '1px solid var(--line)' : 0, justifyContent: 'flex-start', minHeight: 56 }}

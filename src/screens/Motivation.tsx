@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useApp, useLoad } from '../lib/store';
 import { supabase } from '../lib/supabase';
 import { addDays, dateKey } from '../lib/time';
-import { AFFIRMATIONS, affirmationFor, quoteFor } from '../lib/quotes';
+import { AFFIRMATIONS, affirmationFor, quoteFor, yearLabel } from '../lib/quotes';
+import { FieldBrief } from '../components/FieldBrief';
 import { Icon } from '../components/Icon';
 
 const HISTORY_DAYS = 14;
@@ -12,6 +13,7 @@ export default function Motivation() {
   const tz = profile?.timezone;
   const [tab, setTab] = useState<'affirmations' | 'orders'>('affirmations');
   const [favOnly, setFavOnly] = useState(false);
+  const [briefDay, setBriefDay] = useState<string | null>(null);
   const now = new Date();
   const today = dateKey(now, tz);
 
@@ -105,28 +107,34 @@ export default function Motivation() {
           <div className="card hero stack" style={{ padding: '22px 20px', gap: 10, borderRadius: 16 }}>
             <span className="lbl brass">Today's order</span>
             <p className="display" style={{ fontWeight: 500, fontSize: 26, lineHeight: 1.15 }}>“{todayQuote.text}”</p>
-            <span className="small muted">— {todayQuote.author}{todayQuote.title ? `, ${todayQuote.title}` : ''}</span>
-            <button className="icon-btn" style={{ borderColor: 'var(--brass-line)', background: 'none', alignSelf: 'flex-start' }} aria-label="Share" onClick={() => share(`“${todayQuote.text}” — ${todayQuote.author}`)}>
-              <Icon name="share" size={20} />
-            </button>
+            <span className="small muted">— {todayQuote.speaker}{todayQuote.speakerTitle ? `, ${todayQuote.speakerTitle}` : ''}</span>
+            <span className="xs muted">{todayQuote.battle} · {yearLabel(todayQuote.year)}</span>
+            <div className="row" style={{ gap: 10 }}>
+              <button className="btn primary" style={{ flex: 1 }} onClick={() => setBriefDay(today)}>Read the field brief</button>
+              <button className="icon-btn" style={{ borderColor: 'var(--brass-line)', background: 'none' }} aria-label="Share" onClick={() => share(`“${todayQuote.text}” — ${todayQuote.speaker}, ${todayQuote.battle}`)}>
+                <Icon name="share" size={20} />
+              </button>
+            </div>
           </div>
           <span className="lbl">Previous days</span>
           <div className="stack" style={{ gap: 8 }}>
             {days.map((d) => {
               const q = quoteFor(d.k, profile?.quote_authors);
               return (
-                <div key={d.k} className="card tight row" style={{ alignItems: 'flex-start' }}>
+                <button key={d.k} className="card tight row quote-tap" style={{ alignItems: 'flex-start' }} onClick={() => setBriefDay(d.k)}>
                   <span className="mono" style={{ fontSize: 11, color: 'var(--muted)', width: 48, flex: 'none', paddingTop: 2 }}>{d.label}</span>
                   <span className="stack" style={{ flex: 1, gap: 4 }}>
                     <span style={{ fontSize: 15, lineHeight: 1.4 }}>“{q.text}”</span>
-                    <span className="xs muted">— {q.author}</span>
+                    <span className="xs muted">— {q.speaker} · {q.battle}, {yearLabel(q.year)}</span>
                   </span>
-                </div>
+                  <span className="muted" aria-hidden="true">›</span>
+                </button>
               );
             })}
           </div>
         </>
       )}
+      {briefDay && <FieldBrief day={briefDay} today={today} authors={profile?.quote_authors} onClose={() => setBriefDay(null)} />}
     </div>
   );
 }
