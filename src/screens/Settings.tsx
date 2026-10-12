@@ -16,7 +16,7 @@ const LEAGUES = [{ k: 'nfl', l: 'NFL' }, { k: 'ncaaf', l: 'NCAAF' }, { k: 'nhl',
 export default function Settings() {
   const { profile, updateProfile, session, toast } = useApp();
   const [params, setParams] = useSearchParams();
-  const [sheet, setSheet] = useState<null | 'quotes' | 'keywords' | 'teams' | 'channels' | 'pin' | 'name' | 'password' | 'delete'>(null);
+  const [sheet, setSheet] = useState<null | 'quotes' | 'keywords' | 'teams' | 'channels' | 'pin' | 'name' | 'delete'>(null);
   const [push, setPush] = useState<'on' | 'off' | 'unsupported'>('off');
   const [lockOn, setLockOn] = useState(lockEnabled());
   const [bioOk, setBioOk] = useState(false);
@@ -60,7 +60,6 @@ export default function Settings() {
       <span className="lbl">You</span>
       <div className="group">
         <button className="item" onClick={() => setSheet('name')}><span>Name &amp; phone</span><span className="v">{profile.display_name}{profile.phone ? ` · ${profile.phone}` : ''}</span></button>
-        <button className="item" onClick={() => setSheet('password')}><span>Sign-in password</span><span className="v">Set or change</span></button>
         <label className="item"><span>Time zone</span>
           <select className="select" style={{ width: 200, minHeight: 36, padding: '4px 8px', fontSize: 13 }} value={profile.timezone} onChange={(e) => save({ timezone: e.target.value })}>
             {['America/Los_Angeles', 'America/Denver', 'America/Phoenix', 'America/Chicago', 'America/New_York', 'Pacific/Honolulu', 'America/Anchorage'].map((z) => <option key={z}>{z}</option>)}
@@ -141,7 +140,6 @@ export default function Settings() {
       {sheet === 'teams' && <ListSheet title="Teams I follow" hint="Their games always show, plus every AP Top 25 college game. Use ESPN's full team names." value={profile.follow_teams}
         onClose={() => setSheet(null)} onSave={async (v) => { await save({ follow_teams: v }); setSheet(null); }} />}
       {sheet === 'channels' && <ChannelSheet overrides={profile.channel_overrides} onClose={() => setSheet(null)} onSave={async (o) => { await save({ channel_overrides: o }); setSheet(null); }} />}
-      {sheet === 'password' && <PasswordSheet onClose={() => setSheet(null)} onDone={() => { setSheet(null); toast('Password set. Sign in with it in the Home Screen app.'); }} />}
       {sheet === 'pin' && <PinSheet onClose={() => setSheet(null)} onSet={() => { setLockOn(true); setSheet(null); toast('Passcode set'); }} />}
     </div>
   );
@@ -208,30 +206,6 @@ function ChannelSheet({ overrides, onClose, onSave }: { overrides: Record<string
         const diff = Object.fromEntries(Object.entries(vals).filter(([k, v]) => base[k] !== v));
         return onSave(diff);
       }}>Save</button>
-    </Sheet>
-  );
-}
-
-function PasswordSheet({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
-  const [a, setA] = useState('');
-  const [b, setB] = useState('');
-  const [err, setErr] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  return (
-    <Sheet onClose={onClose} label="Sign-in password">
-      <span className="lbl">Sign-in password</span>
-      <p className="small muted">Use this to sign in inside the Home Screen app. You'll stay signed in there after that.</p>
-      <input className="input" type="password" autoComplete="new-password" value={a} onChange={(e) => setA(e.target.value)} placeholder="New password (8+ characters)" aria-label="New password" />
-      <input className="input" type="password" autoComplete="new-password" value={b} onChange={(e) => setB(e.target.value)} placeholder="Confirm password" aria-label="Confirm password" />
-      <ErrorNote msg={err} />
-      <button className="btn primary full" disabled={busy} onClick={async () => {
-        if (a.length < 8) return setErr('Use at least 8 characters.');
-        if (a !== b) return setErr("Those don't match.");
-        setBusy(true);
-        const { error } = await supabase.auth.updateUser({ password: a });
-        setBusy(false);
-        if (error) setErr(error.message); else onDone();
-      }}>{busy ? 'Saving…' : 'Set password'}</button>
     </Sheet>
   );
 }

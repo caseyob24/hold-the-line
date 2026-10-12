@@ -2,45 +2,41 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { ErrorNote } from '../components/Chrome';
 
-/**
- * Email + password sign-in. Signing in here (inside the Home Screen app) saves the session in
- * the app itself, so it stays signed in. The emailed link is only for first-time setup or a
- * forgotten password; it opens in Safari, where you can then set a password in Settings.
- */
-export default function Login({ redirectTo, heading }: { redirectTo?: string; heading?: string }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [mode, setMode] = useState<'password' | 'link'>('password');
-  const [sent, setSent] = useState(false);
-  const [busy, setBusy] = useState(false);
+/** Email-only sign-in. No password and no email to check: type your email and you're in. */
+export default function Login({ heading }: { redirectTo?: string; heading?: string }) {
+  const [email, setEmail] = useState(() => {
+    try { return localStorage.getItem('htl_last_email') ?? ''; } catch { return ''; }
+  });
+  const [busy, setBusy] = useState<null | 'in' | 'create'>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [missing, setMissing] = useState(false);
 
-  async function signIn(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
+  async function go(create: boolean) {
+    const clean = email.trim().toLowerCase();
+    if (!clean) return setErr('Enter your email.');
+    setBusy(create ? 'create' : 'in');
     setErr(null);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    setBusy(false);
-    if (error) {
-      setErr(error.message.toLowerCase().includes('invalid')
-        ? "Email or password didn't match. No password yet? Use “Email me a link” once, then set one in Settings."
-        : error.message);
+    setMissing(false);
+    try {
+      const res = await fetch('/api/email-login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: clean, create }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.status === 404) { setMissing(true); throw new Error(body.error); }
+      if (!res.ok) throw new Error(body.error ?? `Sign-in failed (${res.status})`);
+      let { error } = await supabase.auth.verifyOtp({ token_hash: body.token_hash, type: 'magiclink' });
+      if (error) ({ error } = await supabase.auth.verifyOtp({ token_hash: body.token_hash, type: 'email' }));
+      if (error) throw new Error(error.message);
+      try { localStorage.setItem('htl_last_email', clean); } catch { /* private mode */ }
+    } catch (e) {
+      setErr((e as Error).message);
+      setBusy(null);
     }
-  }
-
-  async function sendLink(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setErr(null);
-    const { error } = await supabase.auth.signInWithOtp({ email: email.trim(), options: { emailRedirectTo: redirectTo ?? window.location.origin } });
-    setBusy(false);
-    if (error) setErr(error.message);
-    else setSent(true);
   }
 
   return (
     <div className="app">
-      <form className="screen no-tabs" onSubmit={mode === 'password' ? signIn : sendLink}>
+      <form className="screen no-tabs" onSubmit={(e) => { e.preventDefault(); go(false); }}>
         <div className="head" style={{ marginTop: 40 }}>
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#D4AE52" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 9l7-4 7 4M5 13l7-4 7 4M5 17l7-4 7 4" />
@@ -51,35 +47,16 @@ export default function Login({ redirectTo, heading }: { redirectTo?: string; he
         </div>
         <div className="spacer" />
 
-        {sent ? (
-          <div className="card hero stack">
-            <span className="lbl brass">Link sent</span>
-            <p>Open the email on this phone. It signs you in through Safari — then go to <b>Settings → Sign-in password</b> to set a password, and use it here in the app from then on.</p>
-            <button type="button" className="btn dashed" onClick={() => { setSent(false); setMode('password'); }}>Back to sign in</button>
-          </div>
-        ) : (
-          <>
-            <label className="field">
-              <span className="lbl">Email</span>
-              <input className="input" type="email" autoComplete="username" inputMode="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
-            </label>
-            {mode === 'password' && (
-              <label className="field">
-                <span className="lbl">Password</span>
-                <input className="input" type="password" autoComplete="current-password" required value={password}
-                  onChange={(e) => setPassword(e.target.value)} />
-              </label>
-            )}
-            <ErrorNote msg={err} />
-            <button className="btn primary full" disabled={busy}>
-              {busy ? 'One moment…' : mode === 'password' ? 'Sign in' : 'Email me a link'}
-            </button>
-            <button type="button" className="btn dashed full" onClick={() => { setMode(mode === 'password' ? 'link' : 'password'); setErr(null); }}>
-              {mode === 'password' ? 'First time or forgot password? Email me a link' : 'I have a password'}
-            </button>
-          </>
-        )}
+        <label className="field">
+          <span className="lbl">Email</span>
+          <input className="input" type="email" autoComplete="email" inputMode="email" autoCapitalize="none" required value={email}
+            onChange={(e) => { setEmail(e.target.value); setMissing(false); }} placeholder="you@example.com" />
+        </label>
+        <ErrorNote msg={err} />
+        <button className="btn primary full" disabled={busy !== null}>{busy === 'in' ? 'One moment…' : 'Sign in'}</button>
+        <button type="button" className={`btn full ${missing ? 'primary' : 'dashed'}`} disabled={busy !== null} onClick={() => go(true)}>
+          {busy === 'create' ? 'Creating…' : 'Create account'}
+        </button>
         <a className="xs muted" href="/privacy" style={{ textAlign: 'center', padding: 8 }}>Privacy</a>
       </form>
     </div>
