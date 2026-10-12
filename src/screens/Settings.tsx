@@ -69,8 +69,10 @@ export default function Settings() {
       <span className="lbl">Daily quote</span>
       <div className="group">
         <button className="item" onClick={() => setSheet('quotes')}><span>Quote source</span><span className="v">{profile.quote_authors.length ? profile.quote_authors.map((a) => a.split(' ').slice(-1)[0]).join(', ') : 'All commanders'}</span></button>
-        <label className="item"><span>Delivery time</span>
-          <input className="input sm" type="time" style={{ width: 120 }} value={time(profile.quote_time)} onChange={(e) => save({ quote_time: e.target.value })} /></label>
+        {!profile.notify_checkin && (
+          <label className="item"><span>Quote-only push time</span>
+            <input className="input sm" type="time" style={{ width: 120 }} value={time(profile.quote_time)} onChange={(e) => save({ quote_time: e.target.value })} /></label>
+        )}
       </div>
 
       <span className="lbl">Integrations</span>
@@ -103,10 +105,11 @@ export default function Settings() {
             : push === 'unsupported' ? <span className="v">Add to Home Screen first</span>
               : <button className="v" style={{ background: 'none', border: 0, color: 'var(--brass)' }} onClick={async () => { if (session) setPush((await enablePush(session.user.id)) === 'on' ? 'on' : 'off'); }}>Turn on</button>}
         </div>
-        <label className="toggle">Morning check-in reminder<input type="checkbox" checked={profile.notify_checkin} onChange={(e) => save({ notify_checkin: e.target.checked })} /></label>
-        <label className="item"><span>Reminder time</span><input className="input sm" type="time" style={{ width: 120 }} value={time(profile.checkin_reminder_time)} onChange={(e) => save({ checkin_reminder_time: e.target.value })} /></label>
+        <label className="toggle">Morning pledge (with the day's quote)<input type="checkbox" checked={profile.notify_checkin} onChange={(e) => save({ notify_checkin: e.target.checked })} /></label>
+        <label className="item"><span>Pledge time</span><input className="input sm" type="time" style={{ width: 120 }} value={time(profile.checkin_reminder_time)} onChange={(e) => save({ checkin_reminder_time: e.target.value })} /></label>
+        <label className="toggle">Evening debrief<input type="checkbox" checked={profile.notify_review} onChange={(e) => save({ notify_review: e.target.checked })} /></label>
+        <label className="item"><span>Debrief time</span><input className="input sm" type="time" style={{ width: 120 }} value={time(profile.review_time ?? '21:00')} onChange={(e) => save({ review_time: e.target.value })} /></label>
         <label className="toggle">Milestone celebrations<input type="checkbox" checked={profile.notify_milestones} onChange={(e) => save({ notify_milestones: e.target.checked })} /></label>
-        <label className="toggle">Evening “still holding?” nudge<input type="checkbox" checked={profile.notify_evening} onChange={(e) => save({ notify_evening: e.target.checked })} /></label>
       </div>
 
       <span className="lbl">Privacy</span>

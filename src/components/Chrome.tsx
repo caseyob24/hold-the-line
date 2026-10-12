@@ -14,13 +14,13 @@ export function TabBar() {
       <nav className="tabbar" aria-label="Main">
         <div className="tabbar-inner">
           <NavLink to="/" end className={cls}><Icon name="home" size={22} />Home</NavLink>
-          {!isSponsor && <NavLink to="/calendar" className={cls}><Icon name="calendar" size={22} />Calendar</NavLink>}
+          {!isSponsor && <NavLink to="/today" className={cls}><Icon name="today" size={22} />Today</NavLink>}
           {!isSponsor && (
             <button className="tab" onClick={() => setLogOpen(true)} aria-haspopup="dialog">
               <Icon name="plusCircle" size={22} />Log
             </button>
           )}
-          {!isSponsor && <NavLink to="/sponsor" className={cls}><Icon name="users" size={22} />Sponsor</NavLink>}
+          {!isSponsor && <NavLink to="/motivation" className={cls}><Icon name="star" size={22} />Motivation</NavLink>}
           {isSponsor && <NavLink to="/game-day" className={cls}><Icon name="tv" size={22} />Game Day</NavLink>}
           <NavLink to="/more" className={cls}><Icon name="more" size={22} />More</NavLink>
         </div>
@@ -29,7 +29,9 @@ export function TabBar() {
         <Sheet onClose={() => setLogOpen(false)} label="Log">
           <span className="lbl">Log</span>
           {[
-            { to: '/check-in', icon: 'check', label: 'Daily check-in', color: 'var(--brass)' },
+            { to: '/check-in', icon: 'check', label: 'Morning check-in', color: 'var(--brass)' },
+            { to: '/review', icon: 'moon', label: 'Evening debrief', color: 'var(--steel)' },
+            { to: '/workbook', icon: 'book', label: 'Workbook drill', color: 'var(--olive)' },
             { to: '/urge', icon: 'flame', label: 'Log an urge', color: 'var(--urge)' },
             { to: '/workouts?new=1', icon: 'dumbbell', label: 'Workout', color: 'var(--steel)' },
             { to: '/reach-out', icon: 'phone', label: 'Reach out now', color: '#F08C6C' },

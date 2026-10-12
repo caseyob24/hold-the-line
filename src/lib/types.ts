@@ -13,6 +13,8 @@ export interface Profile {
   notify_checkin: boolean;
   notify_milestones: boolean;
   notify_evening: boolean;
+  notify_review: boolean;
+  review_time: string;
   share_checkins_default: boolean;
   risk_flagging: boolean;
   risk_keywords: string[];
@@ -42,6 +44,24 @@ export interface CheckIn {
   mood: number | null;
   notes: string | null;
   shared_with_sponsor: boolean;
+  created_at: string;
+}
+
+export interface Review {
+  id: string;
+  date: string;
+  outcome: 'held' | 'struggled' | 'slipped';
+  difficulties: string[];
+  difficult_notes: string | null;
+  went_right: string | null;
+  shared_with_sponsor: boolean;
+}
+
+export interface WorkbookEntry {
+  id: string;
+  date: string;
+  drill_key: string;
+  answers: Record<string, string>;
   created_at: string;
 }
 
@@ -166,6 +186,7 @@ export interface SponseeDashboard {
   permissions: Permissions;
   sobrieties: { id: string; name: string; start_at: string; is_primary: boolean }[] | null;
   check_ins: { date: string; pledged: boolean; mood: number | null; created_at: string; notes: string | null }[] | null;
+  reviews: { date: string; outcome: 'held' | 'struggled' | 'slipped'; difficulties: string[]; difficult_notes: string | null; went_right: string | null }[] | null;
   milestones: { id: string; rank: string; days: number; reached_at: string; witnessed: boolean; sobriety_id: string }[] | null;
   risk_events: { title: string; start_at: string }[] | null;
 }

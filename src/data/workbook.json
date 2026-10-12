@@ -1,0 +1,155 @@
+[
+  { "key": "opinion", "title": "Your opinion", "subtitle": "A view you formed recently, and why", "category": "Mindset",
+    "intro": "Sobriety gives you back a clear head. Use it. Think of something you recently made up your mind about — big or small.",
+    "fields": [
+      { "id": "view", "label": "What's the opinion?", "rows": 2 },
+      { "id": "why", "label": "What shaped it — an experience, a conversation, something you read?", "rows": 3 },
+      { "id": "sober", "label": "Would you have seen it the same way while drinking?", "rows": 2 }
+    ] },
+  { "key": "appreciate", "title": "Appreciate yourself", "subtitle": "Three things you did right this week", "category": "Self-worth",
+    "intro": "You don't need anyone's permission to give yourself credit. Small counts.",
+    "fields": [
+      { "id": "one", "label": "First thing", "rows": 1 },
+      { "id": "two", "label": "Second thing", "rows": 1 },
+      { "id": "three", "label": "Third thing", "rows": 1 }
+    ] },
+  { "key": "selftalk", "title": "Flip the self-talk", "subtitle": "Catch a harsh thought and rewrite it", "category": "Mindset",
+    "intro": "The voice that says you're weak isn't giving orders, it's giving noise. Catch one line and rewrite it the way a good sergeant would.",
+    "fields": [
+      { "id": "thought", "label": "The harsh thought", "rows": 2 },
+      { "id": "evidence", "label": "What's the evidence against it?", "rows": 3 },
+      { "id": "rewrite", "label": "Rewrite it", "rows": 2 }
+    ] },
+  { "key": "trigger", "title": "Map a trigger", "subtitle": "Where, when, who, and your exit plan", "category": "Triggers",
+    "intro": "Know the terrain before the fight. Pick one situation that reliably pulls at you.",
+    "fields": [
+      { "id": "where", "label": "Where and when does it happen?", "rows": 2 },
+      { "id": "who", "label": "Who's usually there?", "rows": 1 },
+      { "id": "feel", "label": "What do you feel right before the urge?", "rows": 2 },
+      { "id": "plan", "label": "Your exit plan next time", "rows": 2 }
+    ] },
+  { "key": "gratitude", "title": "Three good things", "subtitle": "What went right in the last 24 hours", "category": "Gratitude",
+    "intro": "Your brain is wired to scan for threats. Train it to spot wins too.",
+    "fields": [
+      { "id": "one", "label": "One", "rows": 1 },
+      { "id": "two", "label": "Two", "rows": 1 },
+      { "id": "three", "label": "Three", "rows": 1 }
+    ] },
+  { "key": "future-letter", "title": "Letter to future you", "subtitle": "Write to yourself, one year sober", "category": "Future",
+    "intro": "Picture yourself a year from today, still holding the line. What do you want that person to know about right now?",
+    "fields": [ { "id": "letter", "label": "Dear future me…", "rows": 6 } ] },
+  { "key": "values", "title": "Values check", "subtitle": "Did today line up with what matters?", "category": "Self-worth",
+    "intro": "Name what you stand for, then hold today up against it.",
+    "fields": [
+      { "id": "value", "label": "A value that matters to you", "rows": 1 },
+      { "id": "today", "label": "Where did today line up with it — or not?", "rows": 3 },
+      { "id": "tomorrow", "label": "One move tomorrow to live it more", "rows": 2 }
+    ] },
+  { "key": "small-win", "title": "Count a small win", "subtitle": "Something you'd have skipped before", "category": "Self-worth",
+    "intro": "Big victories are built from small ones nobody else sees.",
+    "fields": [
+      { "id": "win", "label": "The win", "rows": 2 },
+      { "id": "felt", "label": "How it felt", "rows": 2 }
+    ] },
+  { "key": "urge-autopsy", "title": "Urge autopsy", "subtitle": "Break down your last craving", "category": "Triggers",
+    "intro": "Every urge you survived holds intel. Debrief the most recent one.",
+    "fields": [
+      { "id": "before", "label": "What happened right before?", "rows": 2 },
+      { "id": "peak", "label": "What did the urge tell you?", "rows": 2 },
+      { "id": "helped", "label": "What actually helped it pass?", "rows": 2 }
+    ] },
+  { "key": "corner", "title": "Who's in your corner", "subtitle": "Name your backup", "category": "Relationships",
+    "intro": "Nobody holds the line alone. Take stock of your unit.",
+    "fields": [
+      { "id": "people", "label": "Three people you can call", "rows": 3 },
+      { "id": "lean", "label": "One way you'll lean on one of them this week", "rows": 2 }
+    ] },
+  { "key": "boundary", "title": "Set a boundary", "subtitle": "Decide it before you need it", "category": "Relationships",
+    "intro": "A boundary decided in advance is far easier to hold than one made up under pressure.",
+    "fields": [
+      { "id": "situation", "label": "The situation", "rows": 2 },
+      { "id": "say", "label": "Exactly what you'll say", "rows": 2 },
+      { "id": "pushback", "label": "If they push back, you'll…", "rows": 2 }
+    ] },
+  { "key": "hard-convo", "title": "Prep a hard conversation", "subtitle": "Plan the words, not just the dread", "category": "Relationships",
+    "intro": "Unspoken conflict is fuel for cravings. Get the words ready.",
+    "fields": [
+      { "id": "who", "label": "Who and what about", "rows": 2 },
+      { "id": "goal", "label": "What outcome do you want?", "rows": 2 },
+      { "id": "open", "label": "Your opening line", "rows": 2 }
+    ] },
+  { "key": "body", "title": "Body check-in", "subtitle": "Sleep, energy, and what your body needs", "category": "Health",
+    "intro": "Hungry, angry, lonely or tired make every urge louder. Run the scan.",
+    "fields": [
+      { "id": "sleep", "label": "How did you sleep?", "rows": 1 },
+      { "id": "energy", "label": "Energy and mood right now", "rows": 1 },
+      { "id": "need", "label": "What does your body need today?", "rows": 2 }
+    ] },
+  { "key": "spoils", "title": "Spend the spoils", "subtitle": "Put the money you've saved to work", "category": "Future",
+    "intro": "Check your savings tally. That money is yours now — give it a mission.",
+    "fields": [
+      { "id": "plan", "label": "What will you do with it?", "rows": 2 },
+      { "id": "why", "label": "Why that matters to you", "rows": 2 }
+    ] },
+  { "key": "fear", "title": "Name a fear", "subtitle": "Drag it into the light", "category": "Mindset",
+    "intro": "Fears grow in the dark. Write one down and size it up.",
+    "fields": [
+      { "id": "fear", "label": "The fear", "rows": 2 },
+      { "id": "worst", "label": "Realistic worst case", "rows": 2 },
+      { "id": "do", "label": "What you'd actually do if it happened", "rows": 2 }
+    ] },
+  { "key": "forgive", "title": "Forgive a mistake", "subtitle": "Talk to yourself like a friend would", "category": "Self-worth",
+    "intro": "Carrying shame is heavy gear. Set one piece down.",
+    "fields": [
+      { "id": "mistake", "label": "The mistake", "rows": 2 },
+      { "id": "learned", "label": "What it taught you", "rows": 2 },
+      { "id": "friend", "label": "What you'd say to a friend who made it", "rows": 2 }
+    ] },
+  { "key": "sober-fun", "title": "Sober fun list", "subtitle": "Things you enjoy with a clear head", "category": "Future",
+    "intro": "Sobriety isn't just subtraction. Build the list of what you're adding.",
+    "fields": [
+      { "id": "list", "label": "Three things you enjoy sober", "rows": 3 },
+      { "id": "next", "label": "Which one this week, and when?", "rows": 1 }
+    ] },
+  { "key": "why", "title": "Remember your why", "subtitle": "The reasons you enlisted", "category": "Mindset",
+    "intro": "On hard days the reason matters more than the rules. Write yours down again.",
+    "fields": [
+      { "id": "why", "label": "Why you're doing this", "rows": 4 },
+      { "id": "who", "label": "Who you're doing it for (including you)", "rows": 2 }
+    ] },
+  { "key": "setback", "title": "Lesson from a setback", "subtitle": "Turn a bad day into intel", "category": "Mindset",
+    "intro": "Every commander studies the battles that went wrong. Pick a rough moment and debrief it.",
+    "fields": [
+      { "id": "what", "label": "What happened", "rows": 2 },
+      { "id": "lesson", "label": "The lesson", "rows": 2 },
+      { "id": "change", "label": "What you'll do differently", "rows": 2 }
+    ] },
+  { "key": "becoming", "title": "Who you're becoming", "subtitle": "Describe the sober version of you", "category": "Future",
+    "intro": "Write about the person you're turning into as if it's already true.",
+    "fields": [ { "id": "becoming", "label": "I am becoming someone who…", "rows": 5 } ] },
+  { "key": "kindness", "title": "Do one kind thing", "subtitle": "Get out of your own head", "category": "Relationships",
+    "intro": "Helping someone else is one of the fastest ways to quiet a craving.",
+    "fields": [
+      { "id": "plan", "label": "Who will you help, and how?", "rows": 2 },
+      { "id": "after", "label": "How did it go? (fill in later)", "rows": 2 }
+    ] },
+  { "key": "then-now", "title": "Then vs now", "subtitle": "Measure how far you've marched", "category": "Self-worth",
+    "intro": "Compare a typical day before you stopped with a typical day now.",
+    "fields": [
+      { "id": "then", "label": "A day back then", "rows": 3 },
+      { "id": "now", "label": "A day now", "rows": 3 }
+    ] },
+  { "key": "weekend-plan", "title": "Plan the weekend", "subtitle": "Scout the risky hours ahead", "category": "Triggers",
+    "intro": "Unplanned free time is where many slips happen. Put a plan on the map.",
+    "fields": [
+      { "id": "risky", "label": "The riskiest stretch", "rows": 2 },
+      { "id": "plan", "label": "What you'll be doing instead", "rows": 2 },
+      { "id": "backup", "label": "Who you'll call if it gets hard", "rows": 1 }
+    ] },
+  { "key": "sponsor-q", "title": "Question for your sponsor", "subtitle": "Bring it to your next call", "category": "Relationships",
+    "intro": "Your sponsor has walked this road. What do you want to ask?",
+    "fields": [
+      { "id": "q", "label": "Your question", "rows": 2 },
+      { "id": "context", "label": "What's behind it", "rows": 3 }
+    ] }
+]

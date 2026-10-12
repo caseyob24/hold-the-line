@@ -13,7 +13,6 @@ const RANKS = [
 ];
 const MISSED_CHECKIN_AT = 11 * 60; // 11:00 local
 const UPCOMING_AT = 9 * 60; // 09:00 local
-const EVENING_AT = 20 * 60; // 20:00 local
 
 const inWindow = (now: number, target: number) => now >= target && now < target + WINDOW;
 
@@ -28,13 +27,14 @@ interface Profile {
   quote_last_sent: string | null;
   checkin_reminder_time: string;
   notify_checkin: boolean;
-  notify_evening: boolean;
+  notify_review: boolean;
+  review_time: string;
 }
 
 export default async () => {
   const started = Date.now();
   const { data: profiles, error } = await db().from('profiles')
-    .select('id, display_name, role, timezone, onboarded, quote_time, quote_authors, quote_last_sent, checkin_reminder_time, notify_checkin, notify_evening')
+    .select('id, display_name, role, timezone, onboarded, quote_time, quote_authors, quote_last_sent, checkin_reminder_time, notify_checkin, notify_review, review_time')
     .eq('onboarded', true);
   if (error) {
     console.error(error.message);
@@ -45,23 +45,39 @@ export default async () => {
     try {
       const { date, minutes } = localNow(p.timezone);
 
-      // 1. Daily quote
-      if (inWindow(minutes, toMinutes(p.quote_time)) && p.quote_last_sent !== date) {
-        const q = quoteFor(date, p.quote_authors);
-        await pushToUser(p.id, { title: 'Order of the day', body: `“${q.text}” — ${q.author}`, url: '/' });
-        await db().from('profiles').update({ quote_last_sent: date }).eq('id', p.id);
-      }
-      if (p.role !== 'user') continue;
-
+      const isUser = p.role === 'user';
+      const pledgedToday = async () => {
+        const { data } = await db().from('check_ins').select('pledged').eq('user_id', p.id).eq('date', date).maybeSingle();
+        return Boolean(data?.pledged);
+      };
       const checkedIn = async () => {
         const { count } = await db().from('check_ins').select('id', { count: 'exact', head: true }).eq('user_id', p.id).eq('date', date);
         return (count ?? 0) > 0;
       };
 
-      // 2. Check-in reminder
-      if (p.notify_checkin && inWindow(minutes, toMinutes(p.checkin_reminder_time)) && !(await checkedIn())) {
-        await pushToUser(p.id, { title: 'Morning roll call', body: 'Take 30 seconds to pledge and check in.', url: '/check-in' });
+      // 1. Morning pledge, carrying the day's war quote (users with the pledge reminder on).
+      if (isUser && p.notify_checkin && inWindow(minutes, toMinutes(p.checkin_reminder_time)) && p.quote_last_sent !== date) {
+        await db().from('profiles').update({ quote_last_sent: date }).eq('id', p.id);
+        if (!(await pledgedToday())) {
+          const q = quoteFor(date, p.quote_authors);
+          const { data: sob } = await db().from('sobrieties').select('start_at').eq('user_id', p.id).is('archived_at', null)
+            .order('is_primary', { ascending: false }).limit(1).maybeSingle();
+          const day = sob ? Math.floor((Date.now() - Date.parse(sob.start_at)) / 86_400_000) : null;
+          await pushToUser(p.id, {
+            title: `${day !== null ? `Day ${day} · ` : ''}Make today's pledge`,
+            body: `“${q.text}” — ${q.author}. Tap to pledge.`,
+            url: '/today',
+          });
+        }
       }
+
+      // 2. Quote-only push (sponsors, or users who turned the pledge reminder off).
+      if ((!isUser || !p.notify_checkin) && inWindow(minutes, toMinutes(p.quote_time)) && p.quote_last_sent !== date) {
+        const q = quoteFor(date, p.quote_authors);
+        await pushToUser(p.id, { title: 'Order of the day', body: `“${q.text}” — ${q.author}`, url: '/motivation' });
+        await db().from('profiles').update({ quote_last_sent: date }).eq('id', p.id);
+      }
+      if (!isUser) continue;
 
       // 3. Missed check-in -> sponsor alert
       if (inWindow(minutes, MISSED_CHECKIN_AT) && !(await checkedIn())) {
@@ -91,9 +107,18 @@ export default async () => {
         }
       }
 
-      // 5. Evening nudge
-      if (p.notify_evening && inWindow(minutes, EVENING_AT)) {
-        await pushToUser(p.id, { title: 'Still holding?', body: 'One more evening down. Log an urge or reach out if you need to.', url: '/' });
+      // 5. Evening debrief
+      if (p.notify_review && inWindow(minutes, toMinutes(p.review_time))) {
+        const { count: reviewed } = await db().from('reviews').select('id', { count: 'exact', head: true }).eq('user_id', p.id).eq('date', date);
+        if (!reviewed) {
+          const { count: drills } = await db().from('workbook_entries').select('id', { count: 'exact', head: true }).eq('user_id', p.id).eq('date', date);
+          const d = Math.min(drills ?? 0, 3);
+          await pushToUser(p.id, {
+            title: 'Debrief · How did today go?',
+            body: `Two minutes: what was hard, what held.${d < 3 ? ` ${d} of 3 workbook drills done.` : ' Workbook done — nice work.'}`,
+            url: '/review',
+          });
+        }
       }
     } catch (e) {
       console.error(`cron failed for ${p.id}`, (e as Error).message);

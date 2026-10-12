@@ -23,6 +23,10 @@ import GameDay from './screens/GameDay';
 import More from './screens/More';
 import Lock from './screens/Lock';
 import Setup from './screens/Setup';
+import Today from './screens/Today';
+import Review from './screens/Review';
+import Motivation from './screens/Motivation';
+import { DrillScreen, WorkbookList } from './screens/Workbook';
 
 export default function App() {
   const { ready, session, profile } = useApp();
@@ -50,6 +54,11 @@ export default function App() {
     <div className="app">
       <Routes>
         <Route path="/" element={withTabs(isSponsor ? <SponsorView /> : <Home />)} />
+        <Route path="/today" element={withTabs(<Today />)} />
+        <Route path="/workbook" element={withTabs(<WorkbookList />)} />
+        <Route path="/workbook/:key" element={withTabs(<DrillScreen />)} />
+        <Route path="/review" element={withTabs(<Review />)} />
+        <Route path="/motivation" element={withTabs(<Motivation />)} />
         <Route path="/sobrieties" element={withTabs(<Sobrieties />)} />
         <Route path="/check-in" element={withTabs(<CheckIn />)} />
         <Route path="/urge" element={withTabs(<UrgeLog />)} />

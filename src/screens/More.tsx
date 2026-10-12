@@ -8,6 +8,9 @@ export default function More() {
   const isSponsor = profile?.role === 'sponsor';
   const items = [
     ...(!isSponsor ? [
+      { to: '/calendar', icon: 'calendar', label: 'Calendar' },
+      { to: '/sponsor', icon: 'users', label: 'Sponsor' },
+      { to: '/workbook', icon: 'book', label: 'Workbook' },
       { to: '/sobrieties', icon: 'list', label: 'My sobrieties' },
       { to: '/milestones', icon: 'medal', label: 'Rank & decorations' },
       { to: '/savings', icon: 'coin', label: 'Savings & health' },
