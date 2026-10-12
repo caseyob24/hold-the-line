@@ -8,8 +8,8 @@ import { RankMark } from '../components/Icon';
 import type { Milestone } from '../lib/types';
 
 export default function Milestones() {
-  const { sobrieties, links } = useApp();
-  const [selId, setSelId] = useState(sobrieties.find((s) => s.is_primary)?.id ?? sobrieties[0]?.id);
+  const { sobrieties, links, focus } = useApp();
+  const [selId, setSelId] = useState(focus?.id ?? sobrieties[0]?.id);
   const sob = sobrieties.find((s) => s.id === selId) ?? sobrieties[0];
 
   const ms = useLoad(async () => {

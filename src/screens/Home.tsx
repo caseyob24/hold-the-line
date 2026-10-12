@@ -4,14 +4,15 @@ import { useApp, useLoad } from '../lib/store';
 import { supabase } from '../lib/supabase';
 import { quoteFor, yearLabel } from '../lib/quotes';
 import { FieldBrief } from '../components/FieldBrief';
+import { DayArc } from '../components/DayArc';
 import { currentRank, nextRank, progressToNext } from '../lib/ranks';
-import { dateKey, elapsedParts, greeting } from '../lib/time';
+import { dateKey, daysSince, elapsedParts, greeting } from '../lib/time';
 import { Icon } from '../components/Icon';
 import { Empty } from '../components/Chrome';
 import type { Message } from '../lib/types';
 
 export default function Home() {
-  const { profile, sobrieties, links, sponsoring } = useApp();
+  const { profile, sobrieties, links, sponsoring, focus, setFocus } = useApp();
   const nav = useNavigate();
   const [now, setNow] = useState(Date.now());
   const [brief, setBrief] = useState(false);
@@ -23,7 +24,7 @@ export default function Home() {
   const tz = profile?.timezone;
   const today = dateKey(new Date(now), tz);
   const quote = quoteFor(today, profile?.quote_authors);
-  const primary = sobrieties.find((s) => s.is_primary) ?? sobrieties[0];
+  const primary = focus;
   const sponsor = links.find((l) => l.status === 'active');
 
   const checkin = useLoad(async () => {
@@ -57,6 +58,16 @@ export default function Home() {
         </Link>
       </div>
 
+      {sobrieties.length > 1 && (
+        <div className="chips" role="tablist" aria-label="Which front to show" style={{ flexWrap: 'nowrap', overflowX: 'auto', paddingBottom: 2 }}>
+          {sobrieties.map((s) => (
+            <button key={s.id} role="tab" aria-selected={focus?.id === s.id} className={`chip${focus?.id === s.id ? ' on' : ''}`} style={{ minHeight: 36, fontSize: 13, flex: 'none' }} onClick={() => setFocus(s.id)}>
+              {s.name} · {daysSince(s.start_at)}d
+            </button>
+          ))}
+          <Link to="/sobrieties" className="chip add" style={{ minHeight: 36, fontSize: 13, flex: 'none', textDecoration: 'none', color: 'var(--muted)' }}>+ Add</Link>
+        </div>
+      )}
       {primary && p ? (
         <Link to="/milestones" className="card hero" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, padding: '22px 20px' }}>
           <span className="lbl brass">{primary.name} · holding the line</span>
@@ -77,10 +88,12 @@ export default function Home() {
         <Empty to="/sobrieties" cta="Add one">Nothing tracked yet.</Empty>
       )}
 
+      <DayArc compact />
+
       <button className="card stack quote-tap" onClick={() => setBrief(true)} aria-label="Open field brief for today's quote">
-        <span className="row" style={{ justifyContent: 'space-between' }}>
-          <span className="lbl">Order of the day</span>
-          <span className="xs brass">{quote.battle} · {yearLabel(quote.year)} ›</span>
+        <span className="row" style={{ justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
+          <span className="lbl" style={{ whiteSpace: 'nowrap' }}>Order of the day</span>
+          <span className="xs brass" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{quote.battle.replace(/^(Battle|Siege|Raid) of (the )?/, '')} · {yearLabel(quote.year)} ›</span>
         </span>
         <p className="display" style={{ fontWeight: 500, fontSize: 24, lineHeight: 1.15 }}>“{quote.text}”</p>
         <span className="small muted">— {quote.speaker}{quote.speakerTitle ? `, ${quote.speakerTitle}` : ''}</span>
@@ -88,9 +101,9 @@ export default function Home() {
       {brief && <FieldBrief day={today} today={today} authors={profile?.quote_authors} onClose={() => setBrief(false)} />}
 
       <div className="grid2">
-        <button className="btn" style={{ background: checkin.data ? 'var(--card)' : 'var(--brass)', color: checkin.data ? 'var(--olive)' : 'var(--bg)', border: checkin.data ? '1px solid var(--line)' : 0, justifyContent: 'flex-start', minHeight: 56 }}
+        <button className="btn ghost" style={{ justifyContent: 'flex-start', minHeight: 56, color: checkin.data ? 'var(--olive)' : 'var(--text)' }}
           onClick={() => nav('/check-in')}>
-          <Icon name="check" width={2} />{checkin.data ? 'Checked in' : 'Check in'}
+          <Icon name="check" width={2} />{checkin.data ? 'Mood logged' : 'Mood check'}
         </button>
         <button className="btn ghost" style={{ justifyContent: 'flex-start', minHeight: 56 }} onClick={() => nav('/urge')}>
           <Icon name="flame" stroke="var(--urge)" />Log urge

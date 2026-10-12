@@ -117,8 +117,8 @@ export default async () => {
           const { count: drills } = await db().from('workbook_entries').select('id', { count: 'exact', head: true }).eq('user_id', p.id).eq('date', date);
           const d = Math.min(drills ?? 0, 3);
           await pushToUser(p.id, {
-            title: 'Debrief · How did today go?',
-            body: `Two minutes: what was hard, what held.${d < 3 ? ` ${d} of 3 workbook drills done.` : ' Workbook done — nice work.'}`,
+            title: 'Did you hold the line today?',
+            body: `Confirm the day and close it out.${d < 3 ? ` ${d} of 3 drills done.` : ' Workbook done — nice work.'}`,
             url: '/review',
           });
         }

@@ -33,13 +33,13 @@ function findPattern(urges: Urge[]): string | null {
 }
 
 export default function UrgeLog() {
-  const { session, sobrieties, toast } = useApp();
+  const { session, sobrieties, focus, toast } = useApp();
   const nav = useNavigate();
   const [intensity, setIntensity] = useState(5);
   const [triggers, setTriggers] = useState<string[]>([]);
   const [coping, setCoping] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [sobrietyId, setSobrietyId] = useState<string>(sobrieties.find((s) => s.is_primary)?.id ?? sobrieties[0]?.id ?? '');
+  const [sobrietyId, setSobrietyId] = useState<string>(focus?.id ?? sobrieties[0]?.id ?? '');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 

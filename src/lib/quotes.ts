@@ -21,7 +21,15 @@ export interface Quote {
 
 export const QUOTES = all as unknown as Quote[];
 export const AUTHORS = [...new Set(QUOTES.map((q) => q.speaker))].sort();
-export const AFFIRMATIONS = affirmationList as string[];
+export interface Affirmation {
+  /** The line itself. */
+  text: string;
+  /** Why it's true — the mechanism behind it, so it reads as earned rather than decorative. */
+  ground: string;
+  /** One concrete thing to do with it today. */
+  practice: string;
+}
+export const AFFIRMATIONS = affirmationList as Affirmation[];
 
 // Deterministic shuffle so every device (and the push job) agrees on the day's pick.
 function seeded(seed: number) {
@@ -53,9 +61,9 @@ export function quoteFor(day: string, authors: string[] = []): Quote {
 }
 
 /** The affirmation for a YYYY-MM-DD day, with its stable index (used for favorites). */
-export function affirmationFor(day: string): { index: number; text: string } {
+export function affirmationFor(day: string): Affirmation & { index: number } {
   const index = dailyIndex(day, AFFIRMATIONS.length, 1);
-  return { index, text: AFFIRMATIONS[index] };
+  return { index, ...AFFIRMATIONS[index] };
 }
 
 /** Year label: negative years are BC. */

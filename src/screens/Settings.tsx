@@ -14,7 +14,7 @@ import type { Profile } from '../lib/types';
 const LEAGUES = [{ k: 'nfl', l: 'NFL' }, { k: 'ncaaf', l: 'NCAAF' }, { k: 'nhl', l: 'NHL' }, { k: 'mlb', l: 'MLB' }];
 
 export default function Settings() {
-  const { profile, updateProfile, session, toast } = useApp();
+  const { profile, updateProfile, session, sobrieties, toast } = useApp();
   const [params, setParams] = useSearchParams();
   const [sheet, setSheet] = useState<null | 'quotes' | 'keywords' | 'teams' | 'channels' | 'pin' | 'name' | 'delete'>(null);
   const [push, setPush] = useState<'on' | 'off' | 'unsupported'>('off');
@@ -59,6 +59,7 @@ export default function Settings() {
 
       <span className="lbl">You</span>
       <div className="group">
+        <Link className="item" to="/sobrieties"><span>What I'm quitting</span><span className="v">{sobrieties.length ? `${sobrieties.length} ${sobrieties.length === 1 ? 'front' : 'fronts'} · add or edit` : 'Add one'}</span></Link>
         <button className="item" onClick={() => setSheet('name')}><span>Name &amp; phone</span><span className="v">{profile.display_name}{profile.phone ? ` · ${profile.phone}` : ''}</span></button>
         <label className="item"><span>Time zone</span>
           <select className="select" style={{ width: 200, minHeight: 36, padding: '4px 8px', fontSize: 13 }} value={profile.timezone} onChange={(e) => save({ timezone: e.target.value })}>
@@ -72,7 +73,7 @@ export default function Settings() {
         <button className="item" onClick={() => setSheet('quotes')}><span>Quote source</span><span className="v">{profile.quote_authors.length ? profile.quote_authors.map((a) => a.split(' ').slice(-1)[0]).join(', ') : 'All commanders'}</span></button>
         {!profile.notify_checkin && (
           <label className="item"><span>Quote-only push time</span>
-            <input className="input sm" type="time" style={{ width: 120 }} value={time(profile.quote_time)} onChange={(e) => save({ quote_time: e.target.value })} /></label>
+            <input className="input sm" type="time" style={{ width: 150 }} value={time(profile.quote_time)} onChange={(e) => save({ quote_time: e.target.value })} /></label>
         )}
       </div>
 
@@ -107,9 +108,9 @@ export default function Settings() {
               : <button className="v" style={{ background: 'none', border: 0, color: 'var(--brass)' }} onClick={async () => { if (session) setPush((await enablePush(session.user.id)) === 'on' ? 'on' : 'off'); }}>Turn on</button>}
         </div>
         <label className="toggle">Morning pledge (with the day's quote)<input type="checkbox" checked={profile.notify_checkin} onChange={(e) => save({ notify_checkin: e.target.checked })} /></label>
-        <label className="item"><span>Pledge time</span><input className="input sm" type="time" style={{ width: 120 }} value={time(profile.checkin_reminder_time)} onChange={(e) => save({ checkin_reminder_time: e.target.value })} /></label>
+        <label className="item"><span>Pledge time</span><input className="input sm" type="time" style={{ width: 150 }} value={time(profile.checkin_reminder_time)} onChange={(e) => save({ checkin_reminder_time: e.target.value })} /></label>
         <label className="toggle">Evening debrief<input type="checkbox" checked={profile.notify_review} onChange={(e) => save({ notify_review: e.target.checked })} /></label>
-        <label className="item"><span>Debrief time</span><input className="input sm" type="time" style={{ width: 120 }} value={time(profile.review_time ?? '21:00')} onChange={(e) => save({ review_time: e.target.value })} /></label>
+        <label className="item"><span>Debrief time</span><input className="input sm" type="time" style={{ width: 150 }} value={time(profile.review_time ?? '21:00')} onChange={(e) => save({ review_time: e.target.value })} /></label>
         <label className="toggle">Milestone celebrations<input type="checkbox" checked={profile.notify_milestones} onChange={(e) => save({ notify_milestones: e.target.checked })} /></label>
       </div>
 

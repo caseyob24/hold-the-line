@@ -13,6 +13,7 @@ export default function Motivation() {
   const tz = profile?.timezone;
   const [tab, setTab] = useState<'affirmations' | 'orders'>('affirmations');
   const [favOnly, setFavOnly] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [briefDay, setBriefDay] = useState<string | null>(null);
   const now = new Date();
   const today = dateKey(now, tz);
@@ -66,15 +67,20 @@ export default function Motivation() {
 
       {tab === 'affirmations' ? (
         <>
-          <div className="card hero stack" style={{ padding: '24px 20px', alignItems: 'center', textAlign: 'center', gap: 14, borderRadius: 16 }}>
-            <span className="lbl brass">Today · {now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz })}</span>
-            <p className="display" style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.1 }}>{todayAff.text}</p>
-            <div className="row" style={{ gap: 10 }}>
+          <div className="card hero stack" style={{ padding: '24px 20px', gap: 14, borderRadius: 16 }}>
+            <span className="lbl brass" style={{ textAlign: 'center' }}>Today · {now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz })}</span>
+            <p className="display" style={{ fontWeight: 600, fontSize: 28, lineHeight: 1.1, textAlign: 'center' }}>{todayAff.text}</p>
+            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5, color: 'var(--text)' }}>{todayAff.ground}</p>
+            <div className="brief-lesson" style={{ padding: '10px 14px' }}>
+              <span className="lbl brass">Today's practice</span>
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.45 }}>{todayAff.practice}</p>
+            </div>
+            <div className="row" style={{ gap: 10, justifyContent: 'center' }}>
               <button className="icon-btn" style={{ borderColor: 'var(--brass-line)', background: 'none' }} aria-pressed={isFav(todayAff.index)}
                 aria-label={isFav(todayAff.index) ? 'Remove from favorites' : 'Save to favorites'} onClick={() => toggleFav(todayAff.index)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill={isFav(todayAff.index) ? 'var(--brass)' : 'none'} stroke="var(--brass)" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" /></svg>
               </button>
-              <button className="icon-btn" style={{ borderColor: 'var(--brass-line)', background: 'none' }} aria-label="Share" onClick={() => share(todayAff.text)}>
+              <button className="icon-btn" style={{ borderColor: 'var(--brass-line)', background: 'none' }} aria-label="Share" onClick={() => share(`${todayAff.text}\n\n${todayAff.ground}`)}>
                 <Icon name="share" size={20} />
               </button>
             </div>
@@ -87,16 +93,23 @@ export default function Motivation() {
           <div className="stack" style={{ gap: 8 }}>
             {favOnly
               ? (favoriteList.length ? favoriteList.map((t) => (
-                <div key={t} className="card tight" style={{ fontSize: 15, lineHeight: 1.4 }}>{t}</div>
+                <div key={t.text} className="card tight stack" style={{ gap: 4 }}>
+                  <span style={{ fontSize: 15, lineHeight: 1.4, fontWeight: 600 }}>{t.text}</span>
+                  <span className="small muted" style={{ lineHeight: 1.45 }}>{t.ground}</span>
+                </div>
               )) : <span className="small muted">Tap the heart on an affirmation to save it here.</span>)
               : days.map((d) => {
                 const a = affirmationFor(d.k);
+                const open = expanded === d.k;
                 return (
-                  <div key={d.k} className="card tight row" style={{ alignItems: 'flex-start' }}>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--muted)', width: 48, flex: 'none', paddingTop: 2 }}>{d.label}</span>
-                    <span style={{ flex: 1, fontSize: 15, lineHeight: 1.4 }}>{a.text}</span>
-                    <button aria-label={isFav(a.index) ? 'Remove from favorites' : 'Save to favorites'} aria-pressed={isFav(a.index)} onClick={() => toggleFav(a.index)}
-                      style={{ background: 'none', border: 0, color: isFav(a.index) ? 'var(--brass)' : '#555A4A', fontSize: 18, minWidth: 32, minHeight: 32 }}>♥</button>
+                  <div key={d.k} className="card tight stack" style={{ gap: 6 }}>
+                    <div className="row" style={{ alignItems: 'flex-start' }}>
+                      <span className="mono" style={{ fontSize: 11, color: 'var(--muted)', width: 48, flex: 'none', paddingTop: 2 }}>{d.label}</span>
+                      <button className="quote-tap" style={{ flex: 1, fontSize: 15, lineHeight: 1.4, background: 'none', border: 0, padding: 0 }} aria-expanded={open} onClick={() => setExpanded(open ? null : d.k)}>{a.text}</button>
+                      <button aria-label={isFav(a.index) ? 'Remove from favorites' : 'Save to favorites'} aria-pressed={isFav(a.index)} onClick={() => toggleFav(a.index)}
+                        style={{ background: 'none', border: 0, color: isFav(a.index) ? 'var(--brass)' : '#555A4A', fontSize: 18, minWidth: 32, minHeight: 32 }}>♥</button>
+                    </div>
+                    {open && <p className="small muted" style={{ margin: '0 0 0 48px', lineHeight: 1.45 }}>{a.ground}<br /><span className="brass">Practice:</span> {a.practice}</p>}
                   </div>
                 );
               })}

@@ -53,8 +53,8 @@ export default function Calendar() {
       )}
 
       <div className="row" style={{ gap: 6 }}>
-        <button className="icon-btn" style={{ width: 36, height: 60, borderRadius: 10 }} aria-label="Previous week" onClick={() => setWeekStart(addDays(weekStart, -7))}><Icon name="back" size={16} /></button>
-        <div className="days" style={{ flex: 1 }}>
+        <button className="icon-btn" style={{ width: 30, height: 60, borderRadius: 10 }} aria-label="Previous week" onClick={() => setWeekStart(addDays(weekStart, -7))}><Icon name="back" size={16} /></button>
+        <div className="days" style={{ flex: 1, minWidth: 0 }}>
           {days.map((d) => {
             const k = dateKey(d);
             return (
@@ -64,7 +64,7 @@ export default function Calendar() {
             );
           })}
         </div>
-        <button className="icon-btn" style={{ width: 36, height: 60, borderRadius: 10, transform: 'scaleX(-1)' }} aria-label="Next week" onClick={() => setWeekStart(addDays(weekStart, 7))}><Icon name="back" size={16} /></button>
+        <button className="icon-btn" style={{ width: 30, height: 60, borderRadius: 10, transform: 'scaleX(-1)' }} aria-label="Next week" onClick={() => setWeekStart(addDays(weekStart, 7))}><Icon name="back" size={16} /></button>
       </div>
 
       <ErrorNote msg={err ?? week.error} />

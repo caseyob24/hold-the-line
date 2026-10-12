@@ -123,14 +123,14 @@ export default function SponsorView() {
           {s.reviews && s.reviews.length > 0 && (() => {
             const r = s.reviews[0];
             const color = r.outcome === 'held' ? 'var(--olive)' : r.outcome === 'struggled' ? 'var(--brass)' : 'var(--urge)';
-            const label = r.outcome === 'held' ? 'Held the line' : r.outcome === 'struggled' ? 'Struggled' : 'Slipped';
+            const label = r.outcome === 'held' ? 'Held the line' : r.outcome === 'struggled' ? 'Held — hard day' : 'Slipped';
             return (
               <div className="card tight stack" style={{ gap: 6 }}>
                 <div className="between">
-                  <span className="lbl">Evening debrief · {fmtDate(`${r.date}T12:00:00`, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                  <span className="small" style={{ color, fontWeight: 600 }}>{label}</span>
+                  <span className="lbl">Debrief · {fmtDate(`${r.date}T12:00:00`, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                  <span className="small" style={{ color, fontWeight: 600, whiteSpace: 'nowrap' }}>{label}</span>
                 </div>
-                {r.difficulties.length > 0 && <span className="small muted">Hard: {r.difficulties.join(', ')}</span>}
+                {r.difficulties.length > 0 && <span className="small muted">{r.difficulties.join(' · ')}</span>}
                 {r.difficult_notes && <p className="small">{r.difficult_notes}</p>}
                 {r.went_right && <p className="small" style={{ color: '#DCE3A8' }}>Went right: {r.went_right}</p>}
               </div>

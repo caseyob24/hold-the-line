@@ -13,6 +13,9 @@ interface AppState {
   sobrieties: Sobriety[];
   links: SponsorLink[]; // links where I am the user (my sponsors)
   sponsoring: number; // active links where I am the sponsor
+  /** The front shown on Home and used for "Day N" — the primary unless the user switched. */
+  focus: Sobriety | null;
+  setFocus: (id: string) => void;
   refresh: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
   toast: (msg: string) => void;
@@ -34,6 +37,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sobrieties, setSobrieties] = useState<Sobriety[]>([]);
   const [links, setLinks] = useState<SponsorLink[]>([]);
   const [sponsoring, setSponsoring] = useState(0);
+  const [focusId, setFocusId] = useState<string | null>(() => { try { return localStorage.getItem('htl_focus'); } catch { return null; } });
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [party, setParty] = useState(0);
   const toastTimer = useRef<number>();
@@ -113,9 +117,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setProfile(data as Profile);
   }, [session]);
 
+  const setFocus = useCallback((id: string) => {
+    setFocusId(id);
+    try { localStorage.setItem('htl_focus', id); } catch { /* private mode */ }
+  }, []);
+  const focus = sobrieties.find((s) => s.id === focusId) ?? sobrieties.find((s) => s.is_primary) ?? sobrieties[0] ?? null;
+
   const value = useMemo<AppState>(
-    () => ({ ready, session, profile, sobrieties, links, sponsoring, refresh, updateProfile, toast, celebrate }),
-    [ready, session, profile, sobrieties, links, sponsoring, refresh, updateProfile, toast, celebrate],
+    () => ({ ready, session, profile, sobrieties, links, sponsoring, focus, setFocus, refresh, updateProfile, toast, celebrate }),
+    [ready, session, profile, sobrieties, links, sponsoring, focus, setFocus, refresh, updateProfile, toast, celebrate],
   );
 
   return (

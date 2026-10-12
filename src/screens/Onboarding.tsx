@@ -138,18 +138,21 @@ export default function Onboarding() {
           <>
             <div className="head">
               <span className="lbl">Step 2 of 3 · Supply lines</span>
-              <h1 className="title" style={{ fontSize: 38 }}>Connect your Outlook calendar</h1>
+              <h1 className="title" style={{ fontSize: 38 }}>Your daily rhythm</h1>
               <p className="muted">
-                Check-in reminders, workouts and sponsor calls land on your calendar, and evenings with dinners, bars or games get
-                flagged so you can plan ahead.
+                Every morning you make a one-tap pledge. Every evening you confirm you held the line and debrief for two minutes.
+                In between: three short workbook drills and the order of the day. You can tune the times in Settings.
+              </p>
+              <p className="muted" style={{ fontSize: 14 }}>
+                Optional: connect your Outlook calendar so workouts and sponsor calls land on it and risky evenings get flagged.
               </p>
             </div>
             <div className="spacer" />
-            <button className="btn primary full" onClick={async () => {
-              try { await connectOutlook(); } catch (e) { setErr((e as Error).message); }
-            }}>Connect Outlook</button>
+            <button className="btn primary full" onClick={() => setStep(3)}>Continue</button>
             <ErrorNote msg={err} />
-            <button className="btn dashed full" onClick={() => setStep(3)}>Skip for now</button>
+            <button className="btn dashed full" onClick={async () => {
+              try { await connectOutlook(); } catch (e) { setErr((e as Error).message); }
+            }}>Connect Outlook calendar (optional)</button>
           </>
         )}
 
